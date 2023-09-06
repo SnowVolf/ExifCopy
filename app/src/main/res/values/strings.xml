@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ExifCopy</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="main_fragment_label">ExifCopy</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="select_target">Select target image</string>
+    <string name="select_source">Select source image</string>
+    <string name="execute">Execute</string>
+    <string name="exclude_orientation_msg">Exclude image orientation tag</string>
+
+    <string name="target_uri_default">Target image URI will be shown here.</string>
+    <string name="source_uri_default">Source image URI will be shown here.</string>
+</resources>
