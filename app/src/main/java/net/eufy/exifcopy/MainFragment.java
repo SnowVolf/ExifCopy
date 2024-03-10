@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -24,7 +27,6 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import net.eufy.exifcopy.databinding.FragmentMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -33,7 +35,14 @@ import java.io.InputStream;
 public class MainFragment extends Fragment {
 
     private static final String TAG = "ExifCopy";
-    private FragmentMainBinding binding;
+
+    private TextView targetUriText;
+    private TextView sourceUriText;
+
+    private Button selectTargetButton;
+    private Button selectSourceButton;
+    private Button executeButton;
+    private CheckBox excludeOrientationCheckbox;
 
     private ActivityResultLauncher<Intent> startGalleryForTargetIntent;
     private ActivityResultLauncher<Intent> startGalleryForSourceIntent;
@@ -56,7 +65,7 @@ public class MainFragment extends Fragment {
                         if (result.getResultCode() == RESULT_OK)
                         {
                             targetUri = result.getData().getData();
-                            binding.targetUriText.setText(targetUri.getPath());
+                            targetUriText.setText(targetUri.getPath());
                         }
                     }
                 });
@@ -69,20 +78,26 @@ public class MainFragment extends Fragment {
                         if (result.getResultCode() == RESULT_OK)
                         {
                             sourceUri = result.getData().getData();
-                            binding.sourceUriText.setText(sourceUri.getPath());
+                            sourceUriText.setText(sourceUri.getPath());
                         }
                     }
                 });
 
-        binding = FragmentMainBinding.inflate(inflater, container, false);
-        return binding.getRoot();
 
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.selectTargetButton.setOnClickListener(new View.OnClickListener() {
+        selectSourceButton = view.findViewById(R.id.select_source_button);
+        selectTargetButton = view.findViewById(R.id.select_target_button);
+        executeButton = view.findViewById(R.id.execute_button);
+        sourceUriText = view.findViewById(R.id.source_uri_text);
+        targetUriText = view.findViewById(R.id.target_uri_text);
+        excludeOrientationCheckbox = view.findViewById(R.id.exclude_orientation_checkbox);
+
+        selectTargetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent galleryIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
@@ -95,7 +110,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-        binding.selectSourceButton.setOnClickListener(new View.OnClickListener() {
+        selectSourceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent galleryIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
@@ -108,7 +123,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-        binding.executeButton.setOnClickListener(new View.OnClickListener() {
+        executeButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
@@ -129,9 +144,8 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-
-        excludeOrientation = binding.excludeOrientationCheckbox.isChecked();
-        binding.excludeOrientationCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        excludeOrientation = excludeOrientationCheckbox.isChecked();
+        excludeOrientationCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 excludeOrientation = b;
@@ -145,12 +159,6 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
